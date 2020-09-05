@@ -5,3 +5,14 @@
   width: 80%;
   margin: 20px auto;
 }
+.mat-row:nth-child(odd){
+  background-color:lightgray;
+}
+.mat-cell { 
+  min-height:auto;
+  padding: 12px 16px 12px 0;
+}
+.mat-header-cell{
+  background-color: blueviolet;
+  color:#fff;
+}
