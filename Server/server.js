@@ -38,20 +38,17 @@ async function main() {
             return item;
         });
         allLinks = allLinks.concat(links);
-        //console.log("iter:" + iter);
+        console.log("iter:" + iter);
     }
-    const dbSnapshotData = await db.collection("PodcastLinks").doc("Links").get();
-    const dbData = dbSnapshotData.data().allLinks;
+    //const dbSnapshotData = await db.collection("PodcastLinks").doc("Links").get();
+    //const dbData = dbSnapshotData.data().allLinks;
     //console.log(dbData);
-    if (allLinks.length < dbData.length) {
-        collectionRef.doc("Links").set({ allLinks }).then(() => {
-            console.log(`Page : ${iter} links added successfully.`);
-        }).catch((err) => {
-            console.error(`${err} on Page : ${iter}`);
-        });
-    }
-    else {
-        console.log("Nothing to Update!!");
-    }
+
+    collectionRef.doc("Links").set({ allLinks }).then(() => {
+        console.log(`Page : ${iter} links added successfully.`);
+    }).catch((err) => {
+        console.error(`${err} on Page : ${iter}`);
+    });
+
 }
 setInterval(() => main(), dayInMilliseconds);
