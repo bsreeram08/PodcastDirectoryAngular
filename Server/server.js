@@ -1,10 +1,11 @@
 const puppeteer = require('puppeteer');
-var admin = require("firebase-admin");
-var serviceAccount = require("./serviceAccountKey.json");
+const admin = require("firebase-admin");
+const serviceAccount = require("./serviceAccountKey.json");
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://podcast-directory-15d07.firebaseio.com"
 });
+const dayInMilliseconds = 1000 * 60 * 60 * 24;
 const db = admin.firestore();
 async function scrapeMetatags(url) {
     const browser = await puppeteer.launch();
@@ -37,13 +38,20 @@ async function main() {
             return item;
         });
         allLinks = allLinks.concat(links);
-        console.log("iter:" + iter);
+        //console.log("iter:" + iter);
     }
-    collectionRef.doc("Links").set({ allLinks }).then(() => {
-        console.log(`Page : ${iter} links added successfully.`);
-    }).catch((err) => {
-        console.error(`${err} on Page : ${iter}`);
-    });
-    console.log(allLinks.length);
+    const dbSnapshotData = await db.collection("PodcastLinks").doc("Links").get();
+    const dbData = dbSnapshotData.data().allLinks;
+    //console.log(dbData);
+    if (allLinks.length < dbData.length) {
+        collectionRef.doc("Links").set({ allLinks }).then(() => {
+            console.log(`Page : ${iter} links added successfully.`);
+        }).catch((err) => {
+            console.error(`${err} on Page : ${iter}`);
+        });
+    }
+    else {
+        console.log("Nothing to Update!!");
+    }
 }
-main();
+setInterval(() => main(), dayInMilliseconds);
